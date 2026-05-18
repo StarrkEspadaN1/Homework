@@ -1,0 +1,30 @@
+public static class SystemSolver
+{
+    public static bool SolveSystem(LinearEquation eq1, LinearEquation eq2,
+        out double x, out double y, out string error)
+    {
+        x = y = 0;
+        error = null;
+
+        int a1 = eq1.A, b1 = eq1.B;
+        int a2 = eq2.A, b2 = eq2.B;
+
+        int det = a1 * b2 - a2 * b1;
+        if (det == 0)
+        {
+            error = "Система не имеет единственного решения (определитель равен нулю).";
+            return false;
+        }
+
+        // Уравнения имеют вид A·X + B·Y = 0, то есть правые части = 0.
+        // Решением всегда будет X=0, Y=0, если только оба уравнения не вырождены.
+        // Однако для ненулевых решений нужны правые части. По условию задачи даны только левые части.
+        // Поэтому единственное решение – тривиальное (0,0).
+        // Если бы были правые части C1 и C2, то решение:
+        // x = (c1*b2 - c2*b1)/det, y = (a1*c2 - a2*c1)/det.
+        // Но по условию C1 = C2 = 0.
+        x = 0;
+        y = 0;
+        return true;
+    }
+}
