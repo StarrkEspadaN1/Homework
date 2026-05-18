@@ -1,0 +1,29 @@
+using System;
+
+public struct LinearEquation
+{
+    public int A { get; set; }
+    public int B { get; set; }
+
+    public LinearEquation(int a, int b)
+    {
+        A = a;
+        B = b;
+    }
+
+    public static LinearEquation Parse(string input)
+    {
+        // Заменяем запятую на пробел, затем разбиваем по пробелам
+        string normalized = input.Replace(',', ' ');
+        string[] parts = normalized.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length != 2)
+            throw new FormatException("Строка должна содержать два коэффициента, разделённых запятой или пробелом.");
+
+        if (!int.TryParse(parts[0], out int a) || !int.TryParse(parts[1], out int b))
+            throw new FormatException("Коэффициенты должны быть целыми числами.");
+
+        return new LinearEquation(a, b);
+    }
+
+    public override string ToString() => $"{A}·X + {B}·Y = 0";
+}
