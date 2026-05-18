@@ -1,0 +1,48 @@
+using System;
+
+public class Complex
+{
+    public double Re { get; set; }
+    public double Im { get; set; }
+
+    public Complex(double re, double im)
+    {
+        Re = re;
+        Im = im;
+    }
+
+    public static Complex operator +(Complex a, Complex b) =>
+        new Complex(a.Re + b.Re, a.Im + b.Im);
+
+    public static Complex operator -(Complex a, Complex b) =>
+        new Complex(a.Re - b.Re, a.Im - b.Im);
+
+    public static Complex operator *(Complex a, Complex b) =>
+        new Complex(a.Re * b.Re - a.Im * b.Im, a.Re * b.Im + a.Im * b.Re);
+
+    public static Complex operator /(Complex a, Complex b)
+    {
+        double denom = b.Re * b.Re + b.Im * b.Im;
+        if (denom == 0) throw new DivideByZeroException("Деление на ноль.");
+        double real = (a.Re * b.Re + a.Im * b.Im) / denom;
+        double imag = (a.Im * b.Re - a.Re * b.Im) / denom;
+        return new Complex(real, imag);
+    }
+
+    public static Complex operator -(Complex a) => new Complex(-a.Re, -a.Im);
+
+    // Для констант (например, 1, 3) – неявное преобразование из int/double
+    public static implicit operator Complex(double d) => new Complex(d, 0);
+    public static implicit operator Complex(int i) => new Complex(i, 0);
+
+    public override string ToString() => $"{Re} + {Im}i";
+}
+
+// Пример использования
+public static void TestComplex()
+{
+    Complex z = new Complex(1, 1);
+    Complex z1;
+    z1 = z - (z * z * z - 1) / (3 * z * z);
+    Console.WriteLine("z1 = {0}", z1);
+}
