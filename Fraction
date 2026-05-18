@@ -1,0 +1,73 @@
+using System;
+
+public class Fraction
+{
+    public int Numerator { get; private set; }
+    public int Denominator { get; private set; }
+
+    public Fraction(int numerator, int denominator)
+    {
+        if (denominator == 0)
+            throw new ArgumentException("Знаменатель не может быть нулём.");
+        // Приводим к каноническому виду: знаменатель положительный
+        if (denominator < 0)
+        {
+            numerator = -numerator;
+            denominator = -denominator;
+        }
+        int gcd = GCD(Math.Abs(numerator), denominator);
+        Numerator = numerator / gcd;
+        Denominator = denominator / gcd;
+    }
+
+    private static int GCD(int a, int b) => b == 0 ? a : GCD(b, a % b);
+
+    // Арифметические операторы
+    public static Fraction operator +(Fraction a, Fraction b) =>
+        new Fraction(a.Numerator * b.Denominator + b.Numerator * a.Denominator,
+                     a.Denominator * b.Denominator);
+
+    public static Fraction operator -(Fraction a, Fraction b) =>
+        new Fraction(a.Numerator * b.Denominator - b.Numerator * a.Denominator,
+                     a.Denominator * b.Denominator);
+
+    public static Fraction operator *(Fraction a, Fraction b) =>
+        new Fraction(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
+
+    public static Fraction operator /(Fraction a, Fraction b)
+    {
+        if (b.Numerator == 0) throw new DivideByZeroException("Деление на ноль.");
+        return new Fraction(a.Numerator * b.Denominator, a.Denominator * b.Numerator);
+    }
+
+    // Операторы сравнения (через приведение к общему знаменателю)
+    public static bool operator ==(Fraction a, Fraction b) =>
+        a.Numerator * b.Denominator == b.Numerator * a.Denominator;
+
+    public static bool operator !=(Fraction a, Fraction b) => !(a == b);
+
+    public static bool operator <(Fraction a, Fraction b) =>
+        a.Numerator * b.Denominator < b.Numerator * a.Denominator;
+
+    public static bool operator >(Fraction a, Fraction b) =>
+        a.Numerator * b.Denominator > b.Numerator * a.Denominator;
+
+    // Операторы true/false: правильная/неправильная дробь
+    public static bool operator true(Fraction f) =>
+        Math.Abs(f.Numerator) < Math.Abs(f.Denominator); // правильная
+
+    public static bool operator false(Fraction f) =>
+        Math.Abs(f.Numerator) > Math.Abs(f.Denominator); // неправильная
+
+    // Для поддержки операторов в выражениях с целыми числами
+    public static implicit operator Fraction(int n) => new Fraction(n, 1);
+
+    public override string ToString() =>
+        Denominator == 1 ? $"{Numerator}" : $"{Numerator}/{Denominator}";
+
+    public override bool Equals(object obj) =>
+        obj is Fraction f && this == f;
+
+    public override int GetHashCode() =>
+        (Numerator, Denominator).GetHashCode();
+}
